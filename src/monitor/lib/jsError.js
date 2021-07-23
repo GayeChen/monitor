@@ -1,12 +1,11 @@
 import getLastEvent from "../utils/getLastEvent";
 import getSelector from "../utils/getSelector";
+import tracker from "../utils/tracker";
 
 export function injectJsError() {
   // 监听全局未捕获错误
   window.addEventListener('error', function (event) {
     let lastEvent = getLastEvent(); // 最后一个交互事件
-    console.log(event);
-    console.log('lastEvent:', lastEvent)
     let log = {
       kind: 'stability', // 监控指标大类
       type: 'error',
@@ -18,7 +17,7 @@ export function injectJsError() {
       stack: getLines(event.error.stack),
       selector: lastEvent ? getSelector(lastEvent.path) : '' // 代表最后一个操作的元素
     }
-    console.log('log:', log);
+    tracker.send(log);
   })
 
   function getLines(stack) {
